@@ -35,7 +35,8 @@ maze = [Wall(-5.191, 0.9886, 1, 0.15), Wall(-5.639, -0.8309, 0.15, 3.769200), Wa
 def isPointInObstacles(xCoord, yCoord):
     valid_point = False
     for wall in maze:
-        if Point(xCoord, yCoord).within(wall.polygon):
+        if Point(xCoord, yCoord).within(wall.polygon.buffer(0.1)):  # made it such that even if it is close, it will work
+        # if Point(xCoord, yCoord).within(wall.polygon):
             valid_point = True
             break
     return valid_point
