@@ -31,26 +31,56 @@ maze = [Wall(-5.191, 0.9886, 1, 0.15), Wall(-5.639, -0.8309, 0.15, 3.769200), Wa
 #     plt.plot(x, y)
 # plt.show()
 
+threshold_distance_point = 0.1
+threshold_distance = 0.1
 
 def isPointInObstacles(xCoord, yCoord):
     valid_point = False
     for wall in maze:
-        if Point(xCoord, yCoord).within(wall.polygon.buffer(0.1)):  # made it such that even if it is close, it will work
+        if Point(xCoord, yCoord).within(wall.polygon.buffer(0.2)):  # made it such that even if it is close, it will work
         # if Point(xCoord, yCoord).within(wall.polygon):
             valid_point = True
             break
     return valid_point
 
 
+# def isValidPoint(parentNodeX, parentNodeY, childNodeX, childNodeY):
+#     valid_point = not isPointInObstacles(childNodeX, childNodeY)
+#     treeEdge = LineString(
+#         [(parentNodeX, parentNodeY), (childNodeX, childNodeY)])
+#     for wall in maze:
+#         i = 0
+#         while i < 3:
+#             wallEdge = LineString([wall.corners[i], wall.corners[i + 1]])
+#             if treeEdge.intersects(wallEdge):
+#                 valid_point = False
+#             i += 1
+#     return valid_point
+
+
 def isValidPoint(parentNodeX, parentNodeY, childNodeX, childNodeY):
     valid_point = not isPointInObstacles(childNodeX, childNodeY)
     treeEdge = LineString(
         [(parentNodeX, parentNodeY), (childNodeX, childNodeY)])
+    
     for wall in maze:
         i = 0
         while i < 3:
             wallEdge = LineString([wall.corners[i], wall.corners[i + 1]])
-            if treeEdge.intersects(wallEdge):
+            
+            distance = treeEdge.distance(wallEdge)
+            
+            
+            
+            if distance < threshold_distance:
                 valid_point = False
+                break
+            
             i += 1
+        
+        if not valid_point:
+            break
+    
     return valid_point
+
+
