@@ -5,8 +5,8 @@ from geometry_msgs.msg import Point, Twist
 from math import atan2
 
 
-x = 0.0
-y = 0.0 
+x = -5.06+1.79
+y = -3.12+0.66
 theta = 0.0
 
 def newOdom(msg):
@@ -22,7 +22,7 @@ def newOdom(msg):
 
 rospy.init_node("speed_controller")
 
-sub = rospy.Subscriber("/odometry/filtered", Odometry, newOdom)
+sub = rospy.Subscriber("/odom", Odometry, newOdom)
 pub = rospy.Publisher("/cmd_vel", Twist, queue_size = 1)
 
 speed = Twist()
@@ -30,8 +30,8 @@ speed = Twist()
 r = rospy.Rate(4)
 
 goal = Point()
-goal.x = 5
-goal.y = 5
+goal.x = -5.0308+1.79
+goal.y = -2.96+0.66
 
 while not rospy.is_shutdown():
     inc_x = goal.x -x
