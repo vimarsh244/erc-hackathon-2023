@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-
+ # + chatgpt
+# seems not too good
 # https://github.com/kulbir-ahluwalia/Turtlebot_3_PID/blob/master/control_bot/Scripts/final.py
 # seems quite good pid
 
