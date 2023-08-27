@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-#Following is the import line for importing the obstacle detection methods i.e. isValidPoint()
-#you need to name this node as "path_planner"
 
+#using isValidPoint() from obstacle_detection
 
 ## Can be heavily optimize by simply changing generate_random_point function
 # simply making it such that it takes the two points of goals, and just makes random points
@@ -17,8 +16,18 @@ from shapely.geometry import LineString, Point, Polygon
 
 import matplotlib.pyplot as plt
 
+import rospy
 import random
 import math
+
+import std_msgs
+from geometry_msgs.msg import Point
+
+from robotics_hackathon_automation.msg import PointArray 
+
+# import robotics_hackathon_automation
+# from ERC_hackathon_2023.robotics_hackathon_automation.msg import PointArray
+
 
 class Wall:
     def __init__(self, centerX, centerY, length, width):
@@ -48,27 +57,7 @@ class Node:
         self.x = x
         self.y = y
         self.parent = None
-        
-# def visualize_path(nodes, path, start_x, start_y, goal_x, goal_y):
-#     plt.figure()
-#     for node in nodes:
-#         if node.parent:
-#             plt.plot([node.x, node.parent.x], [node.y, node.parent.y], 'b-')
-#     plt.plot(start_x, start_y, 'go', label='Start')
-#     plt.plot(goal_x, goal_y, 'ro', label='Goal')
-#     plt.plot(*zip(*path), 'g-', linewidth=2, label='Path')
-#     plt.legend()
-#     plt.xlim(-10, 10)  # Adjust as needed
-#     plt.ylim(-10, 10)
-#     plt.xlabel('X')
-#     plt.ylabel('Y')
-#     plt.title('RRT Path Planning')
-#     display_maze = [Wall(-5.191, 0.9886, 1, 0.15), Wall(-5.639, -0.8309, 0.15, 3.769200), Wall(-5.672, 1.785, 0.15, 1.597130), Wall(-4.957, 2.543, 1.597130, 0.15), Wall(-4.277, 2.007956, 0.15, 1.169920), Wall(-0.0037, 2.51, 8.729630, 0.15), Wall(-1.588, 1.8136, 0.15, 1.25), Wall(-1.588, 0.0886, 0.15, 2.5), Wall(-2.138, 1.26, 1.25, 0.15), Wall(-2.668, 0.7136, 0.15, 1.25), Wall(-3.488, 0.16, 1.75, 0.15), Wall(2.405, 0.656, 0.75, 0.15), Wall(2.705, 0.956, 0.15, 0.75), Wall(3.2522, 1.2566, 1.25, 0.15), Wall(3.80526, 0.2066, 0.15, 2.25), Wall(3.3802, -0.844, 1, 0.15), Wall(2.955, -0.5433, 0.15, 0.75), Wall(2.7802, -0.2433, 0.5, 0.15), Wall(2.605, -0.5433, 0.15, 0.75), Wall(4.301, 2.189, 0.15, 0.810003), Wall(4.975, 2.5196, 1.50, 0.15), Wall(5.711, 1.998, 0.15, 1.192330), Wall(5.306, 1.463, 0.919672, 0.15), Wall(5.698, 0.301, 0.15, 2.276490), Wall(5.185, -0.885, 1.119670, 0.15), Wall(4.7, -1.296, 0.15, 0.982963), Wall(5.67, -1.7033, 0.15, 1.75), Wall(5.154, -2.521, 1.185380, 0.15), Wall(0.673, -2.534, 7.883080, 0.15), Wall(1.906, -1.93, 0.15, 1.206910), Wall(0.877, -1.7, 0.15, 1.719980), Wall(0.2502, -0.917, 1.50, 0.15), Wall(-0.433, -1.389, 0.15, 1.072), Wall(-0.4292, -0.4799, 0.15, 0.927565), Wall(0.9177, 0.2156, 0.15, 2.416050), Wall(0.23527, 1.3486, 1.5, 0.15), Wall(-0.439, 1.048, 0.15, 0.75), Wall(-3.2627, -1.72, 0.15, 1.75), Wall(-3.883, -0.9203, 1.414750, 0.15), Wall(-3.9377, -2.52, 1.5, 0.15), Wall(-4.615, -2.157, 0.15, 0.870384), Wall(2.105, 1.58, 0.15, 2.15893)]
-#     for wall in display_maze:
-#         x, y = wall.polygon.exterior.xy
-#         plt.plot(x, y)
 
-#     plt.show()
 
 def visualize_all_paths(paths, point_list):
     plt.figure()
@@ -152,21 +141,6 @@ def extract_path(goal_node):
         current = current.parent
     return path
 
-# start_x, start_y = -5.06, -3.12
-
-# goal_x, goal_y = -3.61, -2.20
-# iterations = 1000
-
-# nodes = build_rrt(start_x, start_y, goal_x, goal_y, iterations)
-# if nodes:
-#     path = extract_path(nodes[-1])
-
-#     print("Path found:", path)
-#     visualize_path(nodes, path)
-
-# else:
-#     print("No path found")
-
 def plan_path_for_points(point_list, iterations_per_point):
     paths = []
 
@@ -199,6 +173,11 @@ point_list = [
 iterations_per_point = 100000
 planned_paths = plan_path_for_points(point_list, iterations_per_point)
 
+
+rospy.init_node('path_planner', anonymous=True)
+path_pub = rospy.Publisher('/planned_path', PointArray, queue_size=10)  # Replace 'point_array_topic' with your desired topic name
+
+
 # for i, path in enumerate(planned_paths):
 #     if path:
 #         print(f"Path from point {i + 1} to point {i + 2}: {path}")
@@ -220,6 +199,7 @@ for i in range(len(point_list) - 1):
     if path:
         print(f"Path from point {i + 1} to point {i + 2}: {path}")
         
+        path_pub.publish(path)
 
         # visualize_path(nodes, path, start_x, start_y, goal_x, goal_y)
     else:

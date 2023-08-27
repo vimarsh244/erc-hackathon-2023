@@ -70,7 +70,10 @@ def isValidPoint(parentNodeX, parentNodeY, childNodeX, childNodeY):
             
             distance = treeEdge.distance(wallEdge)
             
+            # made it such that if the line is closer to any wall
+            # then it will reject such a point
             
+            # making sure that it is far from wall, enough for robo to not crash
             
             if distance < threshold_distance:
                 valid_point = False

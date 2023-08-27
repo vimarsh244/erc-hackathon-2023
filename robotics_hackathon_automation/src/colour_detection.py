@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-#You need to name this node "color_detector"
-#!/usr/bin/env python
-
 import rospy
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
@@ -9,13 +5,19 @@ import cv2
 import numpy as np
 from std_msgs import String
 
+
+pub_colour = rospy.Publisher("/task_status", String, queue_size=5)
+
+
 def image_callback(msg):
     try:
         # Convert ROS image to OpenCV image
         bridge = CvBridge()
         cv_image = bridge.imgmsg_to_cv2(msg, "bgr8")
         rgb_image = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
-        cv2.imshow("Processed Image", cv_image)
+        
+        # cv2.imshow("Processed Image", cv_image)  # FOR DEBUGGING
+        
         # Define the blue color range in HSV
         # Define the blue color range in RGB
         lower_blue = np.array([10, 20, 0])
@@ -34,24 +36,27 @@ def image_callback(msg):
 
         if(blue_px_detected>0):
             print("Iron extraction ongoing")
+            pub_colour.publish("Iron extraction ongoing")
         if(red_px_detected>0):
             print("Zinc extraction ongoing")
+            pub_colour.publish("Zinc extraction ongoing")
         # Apply masks to the original image
         blue_result = cv2.bitwise_and(cv_image, cv_image, mask=blue_mask)
         red_result = cv2.bitwise_and(cv_image, cv_image, mask=red_mask)
-        cv2.imshow("red color detection", red_result) 
-        cv2.imshow("blue color detection", blue_result)
+        
+        # cv2.imshow("red color detection", red_result)  # FOR DEBUGGING
+        # cv2.imshow("blue color detection", blue_result) # FOR DEBUGGING
+        
         cv2.waitKey() 
 
     except Exception as e:
         print(e)
 
 def main():
-    rospy.init_node("cone_detection_node")
+    rospy.init_node("colour_detector")
     
     # Subscribe to the camera topic
     rospy.Subscriber("/camera/rgb/image_raw", Image, image_callback)
-    rospy.Publisher("/task_status", String, queue_size=5)
     
     # Initialize OpenCV window
     cv2.namedWindow("Processed Image", cv2.WINDOW_NORMAL)
