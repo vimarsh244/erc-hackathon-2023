@@ -40,24 +40,35 @@ speed = Twist()
 r = rospy.Rate(4)
 
 goal = Point()
-goal.x = -5.0308+1.79
-goal.y = -2.96+0.66
+# goal.x = -5.0308+1.79
+# goal.y = -2.96+0.66
+
+i = 0
+goal.x = points[i][0]
+goal.y = points[i][1]
+print(goal)
+
 
 while not rospy.is_shutdown():
-    for _x, _y in points:
+    inc_x = goal.x -x
+    inc_y = goal.y -y
+
+    angle_to_goal = atan2(inc_y, inc_x)
+
+    if abs(angle_to_goal - theta) > 0.1:
+        speed.linear.x = 0.0
+        speed.angular.z = 0.2
+    else:
+        speed.linear.x = 0.1
+        speed.angular.z = 0.0
+
+    if(inc_x < 0.1 and inc_y < 0.1 and (angle_to_goal-theta) < 0.1):
+        i= i+1
+        goal.x = points[i][0]
+        goal.y = points[i][1]
+        print(goal)
         
-        inc_x = _x -x
-        inc_y = _y -y
 
-        angle_to_goal = atan2(inc_y, inc_x)
-
-        if abs(angle_to_goal - theta) > 0.1:
-            speed.linear.x = 0.0
-            speed.angular.z = 0.3
-        else:
-            speed.linear.x = 0.5
-            speed.angular.z = 0.0
-
-        pub.publish(speed)
-        r.sleep()    
+    pub.publish(speed)
+    r.sleep()
 
