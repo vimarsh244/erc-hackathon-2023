@@ -7,6 +7,7 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
+from std_msgs import String
 
 def image_callback(msg):
     try:
@@ -50,6 +51,7 @@ def main():
     
     # Subscribe to the camera topic
     rospy.Subscriber("/camera/rgb/image_raw", Image, image_callback)
+    rospy.Publisher("/task_status", String, queue_size=5)
     
     # Initialize OpenCV window
     cv2.namedWindow("Processed Image", cv2.WINDOW_NORMAL)
