@@ -9,6 +9,16 @@ x = -5.06+1.79
 y = -3.12+0.66
 theta = 0.0
 
+
+# List of points to visit
+points = [(-5.030810611572746, -2.964564276874691), (-5.006301016800769, -2.772969051635586), 
+          (-5.01335232539674, -2.5869961083894406), (-5.0450424106615355, -2.4742728427314002), 
+          (-5.036214963592425, -2.383971146520099), (-5.048374125472307, -2.034011051710709)]
+
+
+points = [(round(x+1.79, 2), round(y+0.66, 2)) for x, y in points]
+
+
 def newOdom(msg):
     global x
     global y
@@ -34,17 +44,20 @@ goal.x = -5.0308+1.79
 goal.y = -2.96+0.66
 
 while not rospy.is_shutdown():
-    inc_x = goal.x -x
-    inc_y = goal.y -y
+    for _x, _y in points:
+        
+        inc_x = _x -x
+        inc_y = _y -y
 
-    angle_to_goal = atan2(inc_y, inc_x)
+        angle_to_goal = atan2(inc_y, inc_x)
 
-    if abs(angle_to_goal - theta) > 0.1:
-        speed.linear.x = 0.0
-        speed.angular.z = 0.3
-    else:
-        speed.linear.x = 0.5
-        speed.angular.z = 0.0
+        if abs(angle_to_goal - theta) > 0.1:
+            speed.linear.x = 0.0
+            speed.angular.z = 0.3
+        else:
+            speed.linear.x = 0.5
+            speed.angular.z = 0.0
 
-    pub.publish(speed)
-    r.sleep()    
+        pub.publish(speed)
+        r.sleep()    
+
