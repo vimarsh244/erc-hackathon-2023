@@ -40,7 +40,7 @@ def image_callback(msg):
         red_result = cv2.bitwise_and(cv_image, cv_image, mask=red_mask)
         cv2.imshow("red color detection", red_result) 
         cv2.imshow("blue color detection", blue_result)
-        cv2.waitKey(0) 
+        cv2.waitKey() 
 
     except Exception as e:
         print(e)

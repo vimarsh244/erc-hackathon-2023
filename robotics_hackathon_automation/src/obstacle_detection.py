@@ -31,13 +31,13 @@ maze = [Wall(-5.191, 0.9886, 1, 0.15), Wall(-5.639, -0.8309, 0.15, 3.769200), Wa
 #     plt.plot(x, y)
 # plt.show()
 
-threshold_distance_point = 0.1
+# threshold_distance_point = 0.1
 threshold_distance = 0.1
 
 def isPointInObstacles(xCoord, yCoord):
     valid_point = False
     for wall in maze:
-        if Point(xCoord, yCoord).within(wall.polygon.buffer(0.2)):  # made it such that even if it is close, it will work
+        if Point(xCoord, yCoord).within(wall.polygon.buffer(0.2)):  # made it such that even if it is close, it will reject the point
         # if Point(xCoord, yCoord).within(wall.polygon):
             valid_point = True
             break

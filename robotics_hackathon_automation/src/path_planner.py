@@ -2,6 +2,16 @@
 #Following is the import line for importing the obstacle detection methods i.e. isValidPoint()
 #you need to name this node as "path_planner"
 
+
+## Can be heavily optimize by simply changing generate_random_point function
+# simply making it such that it takes the two points of goals, and just makes random points
+# within those will make it so much faster
+#
+# also optimizing the point distance and using same path of entering for exit things like that could make it much faster
+#
+# also as it decides some points, we can start publishing those to /planned_path instead of waiting for entire thing as doing currently
+#
+
 import obstacle_detection as obsdet
 from shapely.geometry import LineString, Point, Polygon
 
@@ -126,7 +136,7 @@ def build_rrt(start_x, start_y, goal_x, goal_y, iterations):
             new_node.parent = nearest_node
             nodes.append(new_node)
 
-            if euclidean_distance(new_x, new_y, goal_x, goal_y) > 0.2 and euclidean_distance(new_x, new_y, goal_x, goal_y) < 1:  # Adjust goal threshold
+            if euclidean_distance(new_x, new_y, goal_x, goal_y) > 0.2 and euclidean_distance(new_x, new_y, goal_x, goal_y) < 0.7:  # Adjust goal threshold
                 goal_node = Node(goal_x, goal_y)
                 goal_node.parent = new_node
                 nodes.append(goal_node)
@@ -186,7 +196,7 @@ point_list = [
 
 ]
 
-iterations_per_point = 1000000
+iterations_per_point = 100000
 planned_paths = plan_path_for_points(point_list, iterations_per_point)
 
 # for i, path in enumerate(planned_paths):
