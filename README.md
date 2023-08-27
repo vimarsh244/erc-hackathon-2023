@@ -5,11 +5,7 @@
 **Design**:
 
 
-By: Anuj
-
 Ansys Analysis
-
-By: Nandkrishnan Rajesh
 
 
 ### Electronics
