@@ -135,8 +135,8 @@ def build_rrt(start_x, start_y, goal_x, goal_y, iterations):
             new_node = Node(new_x, new_y)
             new_node.parent = nearest_node
             nodes.append(new_node)
-
-            if euclidean_distance(new_x, new_y, goal_x, goal_y) > 0.2 and euclidean_distance(new_x, new_y, goal_x, goal_y) < 0.7:  # Adjust goal threshold
+            
+            if euclidean_distance(new_x, new_y, goal_x, goal_y) > 0.2 and euclidean_distance(new_x, new_y, goal_x, goal_y) < 0.5:  # Adjust goal threshold
                 goal_node = Node(goal_x, goal_y)
                 goal_node.parent = new_node
                 nodes.append(goal_node)
