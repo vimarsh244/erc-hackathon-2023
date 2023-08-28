@@ -4,8 +4,9 @@
 
 **Design**:
 
+![3D model render](/mechanical/3d_model.png)
 
-Model can be found in the mechanical/ directory
+Model files can be found in the mechanical/ directory. https://a360.co/45wuxL5
 
 **Ansys Analysis**:
 
@@ -38,6 +39,20 @@ The Sinosoidal wave produced will be connected to a copper coil. Another copper 
 
 
 ### Automation
+
+**Colour Detection**
+
+
+
+
+**Path Planning**
+
+![Path Planning Algorithm](misc/latest_6_robot_auto_navigates_with_publish_subscribe.png)
+
+
+**Others**
+
+run `catkin_make` after cloning in the `~/catkin_ws/src` disctory.
 
 Path planner uses RRT to make calculate a path which goes over all points.
 
