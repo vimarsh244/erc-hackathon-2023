@@ -96,7 +96,7 @@ def euclidean_distance(x1, y1, x2, y2):
     return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
 def generate_random_point():
-    return random.uniform(-5.4,6), random.uniform(-2.3, 3)  # Adjust range as needed
+    return random.uniform(-5.4,6), random.uniform(-2.7, 3)  # Adjust range as needed
 
 def find_nearest_node(nodes, x, y):
     nearest_node = None

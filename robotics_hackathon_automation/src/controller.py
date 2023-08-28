@@ -4,7 +4,7 @@ from tf.transformations import euler_from_quaternion
 from geometry_msgs.msg import Point, Twist
 from math import atan2, sqrt
 
-from robotics_hackathon_automation import PointArray  # Replace 'your_package' with the actual package name
+from robotics_hackathon_automation.msg import PointArray 
 from geometry_msgs.msg import Point
 
 from collections import deque # array of array - pointers array kinda
@@ -42,10 +42,10 @@ goals = [(round(x+1.79, 2), round(y+0.66, 2)) for x, y in goals]
 #     points[w] = [(round(x+1.79, 2), round(y+0.66, 2)) for x, y in points[w]]
 
 
-points = [[(round(x+1.79, 2), round(y+0.66, 2)) for x, y in sublist] for sublist in points]
+# points = [[(round(x+1.79, 2), round(y+0.66, 2)) for x, y in sublist] for sublist in points]
 
 
-print(points)
+# print(points)
 
 def newOdom(msg):
     global x
@@ -66,11 +66,27 @@ pub = rospy.Publisher("/cmd_vel", Twist, queue_size = 1)
 
 speed = Twist()
 
-points1 = deque()
+points = [[(0.0, 0.0), (1.0, 1.0)],]
 can_go = 0
 
+goal = Point()
+
 def point_array_callback(msg):
-        points1.append(msg.points)
+        global points
+        x = msg.pointss
+        points.append(x)
+        # points.append(msg.pointss)
+        print("helloooo")
+        points = [[(round(x+1.79, 2), round(y+0.66, 2)) for x, y in sublist] for sublist in points]
+        print(points)
+        if(can_go == 0):
+            
+            i = 0 #points in the tragectory
+            j = 0 # paths
+
+            goal.x = points[j][i][0]
+            goal.y = points[j][i][1]
+            print(goal)
         can_go = 1
     # if current_point_array is None:
     #     process_next_point_array()
@@ -83,54 +99,48 @@ rospy.Subscriber('/planned_path', PointArray, point_array_callback)
 
 r = rospy.Rate(100)
 
-goal = Point()
 # goal.x = -5.0308+1.79
 # goal.y = -2.96+0.66
 
-i = 0 #points in the tragectory
-j = 0 # paths
-
-goal.x = points[j][i][0]
-goal.y = points[j][i][1]
-print(goal)
 
 def dist_raw(a,b):
     euclid_dist = sqrt(a**2 + b**2)
     return euclid_dist
 
-while (can_go == 1) and (not rospy.is_shutdown()):
-    inc_x = goal.x -x
-    inc_y = goal.y -y
+while (not rospy.is_shutdown()):
+    if((can_go == 1)):
+        inc_x = goal.x -x
+        inc_y = goal.y -y
 
-    angle_to_goal = atan2(inc_y, inc_x)
-    
-    if(dist_raw(inc_x, inc_y)<0.05 and (angle_to_goal-theta) < 0.1):
-        i= i+1
-        goal.x = points[j][i][0]
-        goal.y = points[j][i][1]
-        # print(goal)
-
-    calculate_d_goal = dist_raw((goals[j][0]- x),goals[j][1]- y)
-    print(calculate_d_goal)
-    if( calculate_d_goal < 0.4):
-        i = len(points[j])
-        print("reached")
-        speed.linear.x = 0
-        speed.angular.z = 0
-        j = j + 1
-        i = 1
-    else:
-        if (angle_to_goal - theta) > 0.1:
-            speed.linear.x = 0.0
-            speed.angular.z = 1
-        elif (angle_to_goal - theta) < -0.1:
-            speed.linear.x = 0.0
-            speed.angular.z = -1
-        else:
-            speed.linear.x = 0.2
-            speed.angular.z = 0.0
-    
+        angle_to_goal = atan2(inc_y, inc_x)
         
+        if(dist_raw(inc_x, inc_y)<0.05 and (angle_to_goal-theta) < 0.1):
+            i= i+1
+            goal.x = points[j][i][0]
+            goal.y = points[j][i][1]
+            # print(goal)
+
+        calculate_d_goal = dist_raw((goals[j][0]- x),goals[j][1]- y)
+        print(calculate_d_goal)
+        if( calculate_d_goal < 0.4):
+            i = len(points[j])
+            print("reached")
+            speed.linear.x = 0
+            speed.angular.z = 0
+            j = j + 1
+            i = 1
+        else:
+            if (angle_to_goal - theta) > 0.1:
+                speed.linear.x = 0.0
+                speed.angular.z = 1
+            elif (angle_to_goal - theta) < -0.1:
+                speed.linear.x = 0.0
+                speed.angular.z = -1
+            else:
+                speed.linear.x = 0.2
+                speed.angular.z = 0.0
+        
+            
 
     pub.publish(speed)
     r.sleep()
