@@ -12,6 +12,10 @@ from collections import deque # array of array - pointers array kinda
 
 import numpy as np
 
+### LOOK at commit ID: 25f0e6aec96f4ab1a437ab29428f13c16f8eb8b0
+# for perfect robot working
+
+
 
 x = -5.06+1.79
 y = -3.12+0.66

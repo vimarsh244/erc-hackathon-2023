@@ -5,7 +5,10 @@
 **Design**:
 
 
-Ansys Analysis
+Model can be found in the mechanical/ directory
+
+**Ansys Analysis**:
+
 
 
 ### Electronics
