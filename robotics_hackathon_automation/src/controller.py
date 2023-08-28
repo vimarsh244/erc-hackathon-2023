@@ -74,6 +74,7 @@ goal = Point()
 def point_array_callback(msg):
         global points
         x = msg.pointss
+        print(x)
         points.append(x)
         # points.append(msg.pointss)
         print("helloooo")
