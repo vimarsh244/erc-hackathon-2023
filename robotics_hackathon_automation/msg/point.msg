@@ -1,1 +1,2 @@
-float32[2] data
+float32 x
+float32 y

@@ -188,6 +188,11 @@ path_pub = rospy.Publisher('/planned_path', PointArray, queue_size=10)  # Replac
 #     else:
 #         print(f"No path found from point {i + 1} to point {i + 2}")
 
+def convert_to_custom_schema(points_list):
+    schema_list = [{'x': x, 'y': y} for x, y in points_list]
+    return schema_list
+
+
 
 for i in range(len(point_list) - 1):
     start_x, start_y = point_list[i]
@@ -198,8 +203,12 @@ for i in range(len(point_list) - 1):
 
     if path:
         print(f"Path from point {i + 1} to point {i + 2}: {path}")
-        
-        path_pub.publish(path)
+        custom_schema_path = [Point(x=x, y=y) for x, y in path]
+
+        point_array_msg = PointArray()
+        point_array_msg.pointss = custom_schema_path
+
+        path_pub.publish(point_array_msg)
 
         # visualize_path(nodes, path, start_x, start_y, goal_x, goal_y)
     else:

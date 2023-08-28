@@ -67,20 +67,28 @@ pub = rospy.Publisher("/cmd_vel", Twist, queue_size = 1)
 speed = Twist()
 
 points = [[(0.0, 0.0), (1.0, 1.0)],]
-can_go = 0
+can_go = False
 
 goal = Point()
 
 def point_array_callback(msg):
         global points
+        global can_go
+        global i 
+        global j
         x = msg.pointss
         print(x)
-        points.append(x)
+        modified_points = [(point.x + 1.79, point.y + 0.66) for point in x]
+        print(modified_points)
+        points.extend(modified_points)
         # points.append(msg.pointss)
         print("helloooo")
-        points = [[(round(x+1.79, 2), round(y+0.66, 2)) for x, y in sublist] for sublist in points]
+        # points = [[(round(x+1.79, 2), round(y+0.66, 2)) for x, y in sublist] for sublist in points]
+        
+        
+        
         print(points)
-        if(can_go == 0):
+        if(not can_go):
             
             i = 0 #points in the tragectory
             j = 0 # paths
@@ -88,7 +96,7 @@ def point_array_callback(msg):
             goal.x = points[j][i][0]
             goal.y = points[j][i][1]
             print(goal)
-        can_go = 1
+        can_go = True
     # if current_point_array is None:
     #     process_next_point_array()
 
@@ -109,7 +117,8 @@ def dist_raw(a,b):
     return euclid_dist
 
 while (not rospy.is_shutdown()):
-    if((can_go == 1)):
+
+    if(can_go):
         inc_x = goal.x -x
         inc_y = goal.y -y
 
@@ -122,7 +131,7 @@ while (not rospy.is_shutdown()):
             # print(goal)
 
         calculate_d_goal = dist_raw((goals[j][0]- x),goals[j][1]- y)
-        print(calculate_d_goal)
+        # print(calculate_d_goal)
         if( calculate_d_goal < 0.4):
             i = len(points[j])
             print("reached")
