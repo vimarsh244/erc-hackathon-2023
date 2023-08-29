@@ -23,7 +23,7 @@ The differential drive mechanism is a simple 4wd that takes in (linear.x and ang
 
 Part 2:
 
-https://www.tinkercad.com/things/5scrJineZXJ?sharecode=lACrRppUO8Gc_l1i7u2KO_VQ8Vd_mAQmPxYdKY659Rk
+https://www.tinkercad.com/things/2AzpW1k3oru?sharecode=b2Rh3jejDMBBp6OE0veHATIasINy7RtwA5-mOQYV0L8
 
 
 Part 3-6:
@@ -35,12 +35,12 @@ Combined all tasks in one circuit
 
 #### Coil Mechanism
 
-The Sinosoidal wave produced will be connected to a copper coil. Another copper coil will be receiving the voltage. When connected across a capcitor and near a mine, due to metal eddy currents, there will be changes across voltage in capacitor measured by any ADC converter.
+The Sinusoidal wave produced will be connected to a copper coil (basically an inductor). Another copper coil will be receiving the voltage. When connected across a capacitor and near a mine, due to metal eddy currents, there will be changes across voltage in capacitor measured by Arduino.
 
 
 ### Automation
 
-**Colour Detection**
+**Color Detection**
 
 
 
@@ -52,9 +52,14 @@ The Sinosoidal wave produced will be connected to a copper coil. Another copper 
 
 **Others**
 
-run `catkin_make` after cloning in the `~/catkin_ws/src` disctory.
+run `catkin_make` after cloning in the `~/catkin_ws/src` directory.
 
 Path planner uses RRT to make calculate a path which goes over all points.
 
 Due to time constraints I could not make a good PID controller, just made a simple controller to go from one point to another.
+
+
+
+### Credits
+
 
