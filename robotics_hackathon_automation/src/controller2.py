@@ -5,6 +5,10 @@ from tf.transformations import euler_from_quaternion
 from geometry_msgs.msg import Point, Twist
 from robotics_hackathon_automation.msg import PointArray 
 from math import atan2, sqrt
+import std_msgs
+
+import re ##regex use :((
+
 
 class PID:
     def __init__(self, P=0.2, I=0.0, D=0.0):
@@ -84,13 +88,55 @@ pub = rospy.Publisher("/cmd_vel", Twist, queue_size = 1)
 
 speed = Twist()
 
-def point_array_callback(data):
-    global points
 
-    # Add received points to the list
-    points += [(point.x + 1.79, point.y + 0.66) for point in data.pointss]
+array_of_arrays = []
+current_array = []
 
-rospy.Subscriber('/planned_path', PointArray, point_array_callback)
+
+# Define the callback function for the subscriber
+def array_string_callback(msg):
+    print("called callback")
+    # Extract the array string from the received message
+    array_string = msg.data
+    
+    try:
+        
+        global array_of_arrays
+        global current_array
+        matches = re.findall(r"x:\s*(-?\d+\.\d+)\ny:\s*(-?\d+\.\d+)", array_string)
+
+        
+        for match in matches:
+            x, y = float(match[0]), float(match[1])
+            current_array.append((x, y))
+            
+            if len(current_array) == 2:
+                array_of_arrays.append(current_array)
+                current_array = []
+
+        print(array_of_arrays)
+
+        # Evaluate the string to get the original array of arrays
+        # original_arrays = eval(eval(array_string))
+        
+        # print(original_arrays)
+        # Process each array of points
+        modified_arrays = []
+        for array in array_of_arrays:
+            modified_array = []
+            for point in array:
+                modified_point = {'x': point['x'] + 1.79, 'y': point['y'] + 0.66}
+                modified_array.append(modified_point)
+            modified_arrays.append(modified_array)
+        
+        # Print or use the modified arrays as needed
+        print("Modified Arrays:", modified_arrays)
+        
+    except Exception as e:
+        rospy.logerr("Error processing array string: %s", str(e))
+
+# Subscribe to the array string topic
+rospy.Subscriber("/planned_path", std_msgs.msg.String, array_string_callback)
 
 r = rospy.Rate(50)
 pid = PID()

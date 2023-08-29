@@ -25,6 +25,10 @@ from geometry_msgs.msg import Point
 
 from robotics_hackathon_automation.msg import PointArray 
 
+from std_msgs.msg import String
+
+# from std_msgs import String
+
 # import robotics_hackathon_automation
 # from ERC_hackathon_2023.robotics_hackathon_automation.msg import PointArray
 
@@ -175,7 +179,9 @@ planned_paths = plan_path_for_points(point_list, iterations_per_point)
 
 
 rospy.init_node('path_planner', anonymous=True)
-path_pub = rospy.Publisher('/planned_path', PointArray, queue_size=10)  # Replace 'point_array_topic' with your desired topic name
+# path_pub = rospy.Publisher('/planned_path', PointArray, queue_size=10)  # Replace 'point_array_topic' with your desired topic name
+
+array_pub = rospy.Publisher('/planned_path', String, queue_size=10)  # Replace 'point_array_topic' with your desired topic name
 
 
 # for i, path in enumerate(planned_paths):
@@ -192,7 +198,8 @@ def convert_to_custom_schema(points_list):
     schema_list = [{'x': x, 'y': y} for x, y in points_list]
     return schema_list
 
-
+# Create a list to store sequences of points
+all_paths = []
 
 for i in range(len(point_list) - 1):
     start_x, start_y = point_list[i]
@@ -204,15 +211,29 @@ for i in range(len(point_list) - 1):
     if path:
         print(f"Path from point {i + 1} to point {i + 2}: {path}")
         custom_schema_path = [Point(x=x, y=y) for x, y in path]
+        all_paths.append(custom_schema_path)  # Add the sequence of points
 
-        point_array_msg = PointArray()
-        point_array_msg.pointss = custom_schema_path
-
-        path_pub.publish(point_array_msg)
-
-        # visualize_path(nodes, path, start_x, start_y, goal_x, goal_y)
     else:
         print(f"No path found from point {i + 1} to point {i + 2}")
+
+# Convert the array of arrays to a single string
+array_string = str(all_paths)
+
+# Save the string to a text file
+with open("paths_data_temp.txt", "w") as f:
+    f.write(array_string)
+
+
+with open("paths_data_temp.txt", "r") as f:
+    array_string = f.read()
+
+
+# Publish the array string as a ROS message
+from time import sleep
+
+sleep(5) ## have to do this as workaround, to give enough time to publish, although showing map should work
+
+array_pub.publish(array_string)
 
 planned_paths = plan_path_for_points(point_list, iterations_per_point)
 visualize_all_paths(planned_paths, point_list)
