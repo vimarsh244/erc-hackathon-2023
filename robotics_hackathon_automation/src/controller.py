@@ -12,6 +12,9 @@ from collections import deque # array of array - pointers array kinda
 
 import numpy as np
 
+import re
+import std_msgs
+
 ### LOOK at commit ID: 25f0e6aec96f4ab1a437ab29428f13c16f8eb8b0
 # for perfect robot working
 
@@ -21,8 +24,11 @@ x = -5.06+1.79
 y = -3.12+0.66
 theta = 0.0
 
+i = 1
+j = 0
 
-# List of points to visit
+# List of points to visit 
+# This will change
 points = [
     [(-5.06, -3.12), (-5.088418491884296, -3.035145357926098), (-5.112365173201178, -2.918068598434703), (-5.1272912236507375, -2.663878783208241), (-5.0632862582198515, -2.3811981852437425), (-5.047389163139106, -1.957727714886989), (-5.064057379641183, -1.5588124696679229), (-4.859541880326859, -1.2513497426230136), (-4.819389714604883, -1.2913236747856882), (-4.730206976687626, -1.3015577062731976), (-4.701967324035544, -1.3373260319035023), (-4.671530485017849, -1.3906051804477462), (-4.657150660814364, -1.3833915678023345), (-4.585774690154912, -1.375661547099686), (-4.51584913576658, -1.361443018372245), (-4.509376426309283, -1.3189928757613916), (-4.464163273789211, -1.3113915602345845), (-4.459817784278702, -1.3022596027832114), (-4.4459821958607595, -1.3029293461877836), (-4.442390510774949, -1.2979731071793097), (-4.418549683176905, -1.307669495674152), (-4.355031281423723, -1.3216208363557524), (-4.320288967331228, -1.3831989178161062), (-4.3125785732234245, -1.441974287985153), (-4.261580831574404, -1.4699384285664028), (-4.201763758886193, -1.5144138986766347), (-4.216565223861122, -1.5698511793317724), (-4.234880231238499, -1.6045113133816644), (-4.233523964664006, -1.6579665176994762), (-4.177136689059108, -1.683521733541641), (-4.143396891798913, -1.7323315459021), (-4.098268940466883, -1.7660060081926483), (-3.61, -2.2)]
 ,
@@ -42,8 +48,6 @@ goals = [(round(x+1.79, 2), round(y+0.66, 2)) for x, y in goals]
 
 
 
-# for w in points:
-#     points[w] = [(round(x+1.79, 2), round(y+0.66, 2)) for x, y in points[w]]
 
 
 # points = [[(round(x+1.79, 2), round(y+0.66, 2)) for x, y in sublist] for sublist in points]
@@ -70,42 +74,48 @@ pub = rospy.Publisher("/cmd_vel", Twist, queue_size = 1)
 
 speed = Twist()
 
-points = [[(0.0, 0.0), (1.0, 1.0)],]
+# points = [[(0.0, 0.0), (1.0, 1.0)],]
 can_go = False
 
 goal = Point()
 
-def point_array_callback(msg):
-        global points
-        global can_go
-        global i 
-        global j
-        x = msg.pointss
-        print(x)
-        modified_points = [(point.x + 1.79, point.y + 0.66) for point in x]
-        print(modified_points)
-        points.extend(modified_points)
-        # points.append(msg.pointss)
-        print("helloooo")
-        # points = [[(round(x+1.79, 2), round(y+0.66, 2)) for x, y in sublist] for sublist in points]
-        
-        
-        
-        print(points)
-        if(not can_go):
-            
-            i = 0 #points in the tragectory
-            j = 0 # paths
 
-            goal.x = points[j][i][0]
-            goal.y = points[j][i][1]
-            print(goal)
-        can_go = True
-    # if current_point_array is None:
-    #     process_next_point_array()
+def convert_coordinates(input_str):
+    # Remove any unnecessary characters and split into groups
+    groups = re.findall(r'\[(.*?)\]', input_str, re.DOTALL)
+    
+    converted_coordinates = []
+    
+    for group in groups:
+        coordinates = re.findall(r'x:\s*(-?\d+\.\d+)\s*y:\s*(-?\d+\.\d+)', group)
+        converted_group = [(float(x), float(y)) for x, y in coordinates]
+        converted_coordinates.append(converted_group)
+    
+    return converted_coordinates
 
 
-rospy.Subscriber('/planned_path', PointArray, point_array_callback)
+def point_array_callback(data):
+    # Convert the modified array string back to a list of paths
+    string_ = data.data
+    print("received things, now converting")
+    global points
+    points = convert_coordinates(string_)
+    global can_go
+    
+    #change point coordinates as per controller requirements
+    # for w in points:
+    #     points[w] = [(round(x+1.79, 2), round(y+0.66, 2)) for x, y in points[w]]
+        
+    points = [[(round(x+1.79, 2), round(y+0.66, 2)) for x, y in sublist] for sublist in points]
+
+
+    can_go = True
+    print(points)
+    
+
+
+
+rospy.Subscriber('/planned_path', std_msgs.msg.String, point_array_callback)
 
 
 
@@ -115,6 +125,8 @@ r = rospy.Rate(100)
 # goal.x = -5.0308+1.79
 # goal.y = -2.96+0.66
 
+goal.x = points[j][i][0]
+goal.y = points[j][i][1]
 
 def dist_raw(a,b):
     euclid_dist = sqrt(a**2 + b**2)
@@ -126,6 +138,7 @@ while (not rospy.is_shutdown()):
         inc_x = goal.x -x
         inc_y = goal.y -y
 
+        # print("lets goo")
         angle_to_goal = atan2(inc_y, inc_x)
         
         if(dist_raw(inc_x, inc_y)<0.05 and (angle_to_goal-theta) < 0.1):
@@ -143,6 +156,9 @@ while (not rospy.is_shutdown()):
             speed.angular.z = 0
             j = j + 1
             i = 1
+            goal.x = points[j][i][0]
+            goal.y = points[j][i][1]
+
         else:
             if (angle_to_goal - theta) > 0.1:
                 speed.linear.x = 0.0

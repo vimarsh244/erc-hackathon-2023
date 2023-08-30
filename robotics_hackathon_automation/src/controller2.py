@@ -96,28 +96,32 @@ pub = rospy.Publisher("/cmd_vel", Twist, queue_size = 1)
 speed = Twist()
 
 
-def convert_and_modify_path(custom_schema_path):
-    modified_path = []
-    for point in custom_schema_path:
-        modified_x = point.x + 1.79  # Adding X offset
-        modified_y = point.y + 0.66  # Adding Y offset
-        modified_path.append(Point(x=modified_x, y=modified_y))
-    print(modified_path)
-    return modified_path
+
+def convert_coordinates(input_str):
+    # Remove any unnecessary characters and split into groups
+    groups = re.findall(r'\[(.*?)\]', input_str, re.DOTALL)
+    
+    converted_coordinates = []
+    
+    for group in groups:
+        coordinates = re.findall(r'x:\s*(-?\d+\.\d+)\s*y:\s*(-?\d+\.\d+)', group)
+        converted_group = [(float(x), float(y)) for x, y in coordinates]
+        converted_coordinates.append(converted_group)
+    
+    return converted_coordinates
+
+
+points
 
 def subscriber_callback(data):
     # Convert the modified array string back to a list of paths
     string_ = data.data
-    print(string_[0])
-    print(type(string_))
-    modified_paths = eval(data.data)
+    print("received things, now converting")
+    global points
+    points = convert_coordinates(string_)
+    
+print(points)
 
-    print(modified_path)
-    for path in modified_paths:
-        modified_path = convert_and_modify_path(path)
-        print("Modified Path:")
-        for point in modified_path:
-            print(f"X: {point.x}, Y: {point.y}")
 
 
 rospy.Subscriber('/planned_path', std_msgs.msg.String, subscriber_callback)
