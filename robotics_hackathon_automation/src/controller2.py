@@ -70,6 +70,13 @@ y = 0.0
 theta = 0.0
 points = []
 
+
+
+# [
+#     [(x,y),(p,q),...],[(x,y),(p,q),...],[(x,y),(p,q),...],[(x,y),(p,q),...],
+# ]
+
+
 def newOdom(msg):
     global x
     global y
@@ -89,54 +96,36 @@ pub = rospy.Publisher("/cmd_vel", Twist, queue_size = 1)
 speed = Twist()
 
 
-array_of_arrays = []
-current_array = []
+def convert_and_modify_path(custom_schema_path):
+    modified_path = []
+    for point in custom_schema_path:
+        modified_x = point.x + 1.79  # Adding X offset
+        modified_y = point.y + 0.66  # Adding Y offset
+        modified_path.append(Point(x=modified_x, y=modified_y))
+    print(modified_path)
+    return modified_path
+
+def subscriber_callback(data):
+    # Convert the modified array string back to a list of paths
+    string_ = data.data
+    print(string_[0])
+    print(type(string_))
+    modified_paths = eval(data.data)
+
+    print(modified_path)
+    for path in modified_paths:
+        modified_path = convert_and_modify_path(path)
+        print("Modified Path:")
+        for point in modified_path:
+            print(f"X: {point.x}, Y: {point.y}")
 
 
-# Define the callback function for the subscriber
-def array_string_callback(msg):
-    print("called callback")
-    # Extract the array string from the received message
-    array_string = msg.data
-    
-    try:
-        
-        global array_of_arrays
-        global current_array
-        matches = re.findall(r"x:\s*(-?\d+\.\d+)\ny:\s*(-?\d+\.\d+)", array_string)
+rospy.Subscriber('/planned_path', std_msgs.msg.String, subscriber_callback)
 
-        
-        for match in matches:
-            x, y = float(match[0]), float(match[1])
-            current_array.append((x, y))
-            
-            if len(current_array) == 2:
-                array_of_arrays.append(current_array)
-                current_array = []
 
-        print(array_of_arrays)
-
-        # Evaluate the string to get the original array of arrays
-        # original_arrays = eval(eval(array_string))
-        
-        # print(original_arrays)
-        # Process each array of points
-        modified_arrays = []
-        for array in array_of_arrays:
-            modified_array = []
-            for point in array:
-                modified_point = {'x': point['x'] + 1.79, 'y': point['y'] + 0.66}
-                modified_array.append(modified_point)
-            modified_arrays.append(modified_array)
-        
-        # Print or use the modified arrays as needed
-        print("Modified Arrays:", modified_arrays)
-        
-    except Exception as e:
-        rospy.logerr("Error processing array string: %s", str(e))
 
 # Subscribe to the array string topic
-rospy.Subscriber("/planned_path", std_msgs.msg.String, array_string_callback)
+# rospy.Subscriber("/planned_path", std_msgs.msg.String, array_string_callback)
 
 r = rospy.Rate(50)
 pid = PID()

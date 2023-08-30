@@ -10,9 +10,11 @@ Model files can be found in the mechanical/ directory. https://a360.co/45wuxL5
 
 **Ansys Analysis**:
 
-
+Report can be found [here](mechanical/ansys%20analysis/ERC%20HACK%20ANSYS%20MINED.pdf)
 
 ### Electronics
+
+![PCB Design Sample](electronics/PCB%203-7.png)
 
 Part 1:
 
