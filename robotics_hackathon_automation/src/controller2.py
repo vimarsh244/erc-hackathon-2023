@@ -1,3 +1,5 @@
+# this is using proper PID control, but couldn't make it work within timeframe
+
 import time
 import rospy
 from nav_msgs.msg import Odometry
@@ -8,6 +10,7 @@ from math import atan2, sqrt
 import std_msgs
 
 import re ##regex use :((
+    
 
 
 class PID:

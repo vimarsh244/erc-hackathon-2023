@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 from std_msgs import String
 
+# this simply publishes whenever it sees a cone
 
 pub_colour = rospy.Publisher("/task_status", String, queue_size=5)
 

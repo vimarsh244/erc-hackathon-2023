@@ -55,9 +55,19 @@ Cone detection as follows:
 
 ![Path Planning Algorithm](misc/latest_6_robot_auto_navigates_with_publish_subscribe.png)
 
+Used RRT to create a path, also edited the `obstacle_detection.py` for path to be far away from walls, so that robot doesn't crash with it.
+
+**Controller**
+
+Simple controller for robot to navigate along the planned path. `controller.py`
+
+![demo video of robot moving](misc/final_vid_of_robo_navigating.mp4)
+
 
 **Others**
 
 run `catkin_make` after cloning in the `~/catkin_ws/src` directory.
 
 Path planner uses RRT to make calculate a path which goes over all points.
+
+`roslaunch robotics_hackathon_automation automation_task.launch`

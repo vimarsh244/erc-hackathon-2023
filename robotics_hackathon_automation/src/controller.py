@@ -15,10 +15,12 @@ import numpy as np
 import re
 import std_msgs
 
-### LOOK at commit ID: 25f0e6aec96f4ab1a437ab29428f13c16f8eb8b0
-# for perfect robot working
+## Didn't have enough time for proper PID control, tried it in controller2.py
+# this works perfectly but is a very very simple control mechanism.
 
 
+## needed global variables
+# in hindsight should have used classes, but it was already too messy
 
 x = -5.06+1.79
 y = -3.12+0.66
@@ -28,7 +30,8 @@ i = 1
 j = 0
 
 # List of points to visit 
-# This will change
+# This will change automatically as new path is planned
+# turn can_go flag true, to use this, independently (example planned path)
 points = [
     [(-5.06, -3.12), (-5.088418491884296, -3.035145357926098), (-5.112365173201178, -2.918068598434703), (-5.1272912236507375, -2.663878783208241), (-5.0632862582198515, -2.3811981852437425), (-5.047389163139106, -1.957727714886989), (-5.064057379641183, -1.5588124696679229), (-4.859541880326859, -1.2513497426230136), (-4.819389714604883, -1.2913236747856882), (-4.730206976687626, -1.3015577062731976), (-4.701967324035544, -1.3373260319035023), (-4.671530485017849, -1.3906051804477462), (-4.657150660814364, -1.3833915678023345), (-4.585774690154912, -1.375661547099686), (-4.51584913576658, -1.361443018372245), (-4.509376426309283, -1.3189928757613916), (-4.464163273789211, -1.3113915602345845), (-4.459817784278702, -1.3022596027832114), (-4.4459821958607595, -1.3029293461877836), (-4.442390510774949, -1.2979731071793097), (-4.418549683176905, -1.307669495674152), (-4.355031281423723, -1.3216208363557524), (-4.320288967331228, -1.3831989178161062), (-4.3125785732234245, -1.441974287985153), (-4.261580831574404, -1.4699384285664028), (-4.201763758886193, -1.5144138986766347), (-4.216565223861122, -1.5698511793317724), (-4.234880231238499, -1.6045113133816644), (-4.233523964664006, -1.6579665176994762), (-4.177136689059108, -1.683521733541641), (-4.143396891798913, -1.7323315459021), (-4.098268940466883, -1.7660060081926483), (-3.61, -2.2)]
 ,
@@ -41,19 +44,11 @@ points = [
 [(1.58, -2.26), (1.369042914330488, -2.0554556755775635), (1.44487452380266, -1.974463750297057), (1.28753911728065, -1.576995528944638), (1.3900913517300708, -1.1217739350019802), (1.7213297913321346, -1.0052338431522414), (1.8207842294111956, -0.6146827627487434), (1.8612466252343145, -0.6080173090719295), (1.8605239469988573, -0.6127478900905519), (1.862469095582489, -0.6292489363957453), (1.9029363225184006, -0.6622781280965846), (1.9111755395340952, -0.6833444165017389), (1.9498691824024708, -0.7122980587877199), (2.005537476353885, -0.7589382393788422), (2.122379495315238, -0.8595720485501835), (2.1327773890944113, -0.8532378930323858), (2.2260341615623513, -0.8900799901629937), (2.228993963780184, -0.9622178143444429), (2.2196608117475036, -0.978567302945961), (2.2191785918061853, -1.0419253414370597), (2.2281092200207704, -1.0768247561130257), (2.269522379777209, -1.1403504923377126), (2.3474210246145137, -1.217208197849548), (2.3977812635370723, -1.2948740187174392), (2.39341146860512, -1.3405769913903574), (2.4765648183706204, -1.4192250717533326), (2.5636943862346766, -1.4170975456738588), (2.5877229543225337, -1.4637803102762272), (2.6764750886342803, -1.5212582264707408), (2.7079639630687393, -1.5360173400331725), (2.7293824146230543, -1.5180179931382487), (2.7851285229731615, -1.5287968265847212), (2.918379982779385, -1.5516733111556), (2.964421262963398, -1.5799560112404594), (3.1549959649825103, -1.6468792107481411), (3.1628817388163832, -1.6898629051901346), (3.396042518902723, -1.6841912072478793), (3.436790747636226, -1.713092107777362), (3.4901397039136755, -1.7446995564392824), (3.679789611233092, -1.7467325992608442), (3.7651729198316715, -1.7390037370028104), (3.8753747848702904, -1.7213967435657525), (4.0866370757276265, -1.7066527370881215), (4.160907070568622, -1.6924959691448638), (4.168988791986927, -1.7117864992722656), (4.207093099190114, -1.765056000082262), (4.285821090739435, -1.809821413098915), (4.320708578134983, -1.8462682747547863), (4.314858386363145, -1.8577568211398303), (4.310507095296567, -1.8996279485164103), (4.298197655614918, -1.932324224035403), (4.301138226351329, -1.9545347298090172), (4.3421408163542035, -1.973410776753837), (4.3360995921649925, -1.9950896667915754), (4.329686076409822, -2.008020374659713), (4.313626175279016, -2.020384708640597), (4.322296567263015, -2.0456087318906007), (4.34013226024643, -2.0527914662437197), (4.356087933622728, -2.0735870040009514), (4.471631037006461, -2.0957577726066257), (4.578202651578082, -2.102873011464281), (5.18, -2.19)] 
 ]
 
-
+# will have to feed these set of points *manually*, as given in the assignment
 goals = [(-3.61, -2.2), (-2.28, 1.86), (0.57, 0.33), (1.58, -2.26), (5.18, -2.19)]
 
-goals = [(round(x+1.79, 2), round(y+0.66, 2)) for x, y in goals]
+goals = [(round(x+1.79, 2), round(y+0.66, 2)) for x, y in goals] # making the correct offset
 
-
-
-
-
-# points = [[(round(x+1.79, 2), round(y+0.66, 2)) for x, y in sublist] for sublist in points]
-
-
-# print(points)
 
 def newOdom(msg):
     global x
@@ -66,6 +61,7 @@ def newOdom(msg):
     rot_q = msg.pose.pose.orientation
     # theta = msg.pose.pose.orientation.w
     (roll, pitch, theta) = euler_from_quaternion([rot_q.x, rot_q.y, rot_q.z, rot_q.w])
+    # to convert quaternion representation to normal euler coordinates
 
 rospy.init_node("tb3_controller")
 
@@ -74,11 +70,13 @@ pub = rospy.Publisher("/cmd_vel", Twist, queue_size = 1)
 
 speed = Twist()
 
-# points = [[(0.0, 0.0), (1.0, 1.0)],]
-can_go = False
+can_go = False # flag to keep robot do nothing, only after 
 
 goal = Point()
 
+# i tried a lot to use custom messages, but with the code i had written, 
+# for controller, it didnt work, so sent messages in string format
+# have to use this function to make it back into an array
 
 def convert_coordinates(input_str):
     # Remove any unnecessary characters and split into groups
@@ -103,6 +101,7 @@ def point_array_callback(data):
     global can_go
     
     #change point coordinates as per controller requirements
+    
     # for w in points:
     #     points[w] = [(round(x+1.79, 2), round(y+0.66, 2)) for x, y in points[w]]
         
@@ -112,18 +111,10 @@ def point_array_callback(data):
     can_go = True
     print(points)
     
-
-
-
 rospy.Subscriber('/planned_path', std_msgs.msg.String, point_array_callback)
 
+r = rospy.Rate(100) # change based on how good laptop perf and controller to respond
 
-
-
-r = rospy.Rate(100)
-
-# goal.x = -5.0308+1.79
-# goal.y = -2.96+0.66
 
 goal.x = points[j][i][0]
 goal.y = points[j][i][1]
@@ -132,6 +123,7 @@ def dist_raw(a,b):
     euclid_dist = sqrt(a**2 + b**2)
     return euclid_dist
 
+# main loop for robot to navigate
 while (not rospy.is_shutdown()):
 
     if(can_go):
@@ -141,6 +133,7 @@ while (not rospy.is_shutdown()):
         # print("lets goo")
         angle_to_goal = atan2(inc_y, inc_x)
         
+        # if reached one of the planned points, will go to next
         if(dist_raw(inc_x, inc_y)<0.05 and (angle_to_goal-theta) < 0.1):
             i= i+1
             goal.x = points[j][i][0]
@@ -149,6 +142,9 @@ while (not rospy.is_shutdown()):
 
         calculate_d_goal = dist_raw((goals[j][0]- x),goals[j][1]- y)
         # print(calculate_d_goal)
+        
+        # if reached one of the cone (close to it, enough for camera to detect mine)
+        # will move onto detecting next mine
         if( calculate_d_goal < 0.4):
             i = len(points[j])
             print("reached")
@@ -159,7 +155,7 @@ while (not rospy.is_shutdown()):
             goal.x = points[j][i][0]
             goal.y = points[j][i][1]
 
-        else:
+        else: # simply controlling things
             if (angle_to_goal - theta) > 0.1:
                 speed.linear.x = 0.0
                 speed.angular.z = 1
@@ -175,3 +171,5 @@ while (not rospy.is_shutdown()):
     pub.publish(speed)
     r.sleep()
 
+print("finished")
+# haven't handeled competing maze very well, it will just autoquit 

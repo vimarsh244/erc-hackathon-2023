@@ -11,6 +11,9 @@
 # also as it decides some points, we can start publishing those to /planned_path instead of waiting for entire thing as doing currently
 #
 
+# Using RRT for path planning
+# lots of help for this from internet + chatgpt
+
 import obstacle_detection as obsdet
 from shapely.geometry import LineString, Point, Polygon
 
@@ -33,6 +36,7 @@ from std_msgs.msg import String
 # from ERC_hackathon_2023.robotics_hackathon_automation.msg import PointArray
 
 
+# using this mainly for showing the finalized path after it computes the entire thing
 class Wall:
     def __init__(self, centerX, centerY, length, width):
         self.centerX = centerX
@@ -62,7 +66,7 @@ class Node:
         self.y = y
         self.parent = None
 
-
+# to visualize the planned path
 def visualize_all_paths(paths, point_list):
     plt.figure()
     
@@ -145,6 +149,9 @@ def extract_path(goal_node):
         current = current.parent
     return path
 
+
+# basic goal is to plan from A to B, then B to C and so on.
+
 def plan_path_for_points(point_list, iterations_per_point):
     paths = []
 
@@ -183,16 +190,7 @@ rospy.init_node('path_planner', anonymous=True)
 
 array_pub = rospy.Publisher('/planned_path', String, queue_size=10)  # Replace 'point_array_topic' with your desired topic name
 
-
-# for i, path in enumerate(planned_paths):
-#     if path:
-#         print(f"Path from point {i + 1} to point {i + 2}: {path}")
-# # Inside the loop
-#         # Inside the loop
-#         visualize_path(build_rrt(point_list[i][0], point_list[i][1], point_list[i + 1][0], point_list[i + 1][1], iterations_per_point), path, point_list[i][0], point_list[i][1], point_list[i + 1][0], point_list[i + 1][1])
-
-#     else:
-#         print(f"No path found from point {i + 1} to point {i + 2}")
+# cleaning up unused code
 
 def convert_to_custom_schema(points_list):
     schema_list = [{'x': x, 'y': y} for x, y in points_list]

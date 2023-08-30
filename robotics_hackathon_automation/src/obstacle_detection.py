@@ -44,20 +44,6 @@ def isPointInObstacles(xCoord, yCoord):
     return valid_point
 
 
-# def isValidPoint(parentNodeX, parentNodeY, childNodeX, childNodeY):
-#     valid_point = not isPointInObstacles(childNodeX, childNodeY)
-#     treeEdge = LineString(
-#         [(parentNodeX, parentNodeY), (childNodeX, childNodeY)])
-#     for wall in maze:
-#         i = 0
-#         while i < 3:
-#             wallEdge = LineString([wall.corners[i], wall.corners[i + 1]])
-#             if treeEdge.intersects(wallEdge):
-#                 valid_point = False
-#             i += 1
-#     return valid_point
-
-
 def isValidPoint(parentNodeX, parentNodeY, childNodeX, childNodeY):
     valid_point = not isPointInObstacles(childNodeX, childNodeY)
     treeEdge = LineString(

@@ -1,4 +1,7 @@
 import rospy
+
+# script to instead of everytime calculating, publishes a path precalculated
+
 from std_msgs.msg import String
 from time import sleep
 rospy.init_node('path_planner', anonymous=True)
