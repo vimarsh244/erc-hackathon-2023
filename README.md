@@ -1,4 +1,4 @@
-# NEW
+# ERC Hackathon 2023 submission
 
 ### Mechanical
 
@@ -18,21 +18,21 @@ Report can be found [here](mechanical/ansys%20analysis/ERC%20HACK%20ANSYS%20MINE
 
 Part 1:
 
-https://www.tinkercad.com/things/8tS4cQEKOlx?sharecode=zMyGMb17AG04Dq2QzwaMsAUVSxyepGBn6ncqBjoWyT0
+[link](https://www.tinkercad.com/things/8tS4cQEKOlx?sharecode=zMyGMb17AG04Dq2QzwaMsAUVSxyepGBn6ncqBjoWyT0)
 
 The differential drive mechanism is a simple 4wd that takes in (linear.x and angular.z) from ROS controller which will accordingly turn the motors.
 
 
 Part 2:
 
-https://www.tinkercad.com/things/2AzpW1k3oru?sharecode=b2Rh3jejDMBBp6OE0veHATIasINy7RtwA5-mOQYV0L8
+[link](https://www.tinkercad.com/things/2AzpW1k3oru?sharecode=b2Rh3jejDMBBp6OE0veHATIasINy7RtwA5-mOQYV0L8)
 
 
 Part 3-6:
 
-https://www.tinkercad.com/things/doNj9fPPetp?sharecode=6bNxCSpgDcdtsFkDNGaQSvCr4-Utx1kQABxrum8ldWc
+[link](https://www.tinkercad.com/things/doNj9fPPetp?sharecode=6bNxCSpgDcdtsFkDNGaQSvCr4-Utx1kQABxrum8ldWc)
 
-Combined all tasks in one circuit
+Combined all tasks in one circuit.
 
 
 #### Coil Mechanism
@@ -44,8 +44,8 @@ The Sinusoidal wave produced will be connected to a copper coil (basically an in
 
 **Color Detection**
 
-
-
+Cone detection as follows:
+![Cone Detection](misc/blue_cone_detect.png)
 
 **Path Planning**
 
@@ -57,11 +57,3 @@ The Sinusoidal wave produced will be connected to a copper coil (basically an in
 run `catkin_make` after cloning in the `~/catkin_ws/src` directory.
 
 Path planner uses RRT to make calculate a path which goes over all points.
-
-Due to time constraints I could not make a good PID controller, just made a simple controller to go from one point to another.
-
-
-
-### Credits
-
-
