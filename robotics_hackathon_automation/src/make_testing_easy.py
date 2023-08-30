@@ -27,5 +27,27 @@ array_pub.publish(array_string)
 
 # rospy.spin()
 
+import re
+
+
+def convert_coordinates(input_str):
+    # Remove any unnecessary characters and split into groups
+    groups = re.findall(r'\[(.*?)\]', input_str, re.DOTALL)
+    
+    converted_coordinates = []
+    
+    for group in groups:
+        coordinates = re.findall(r'x:\s*(-?\d+\.\d+)\s*y:\s*(-?\d+\.\d+)', group)
+        converted_group = [(float(x), float(y)) for x, y in coordinates]
+        converted_coordinates.append(converted_group)
+    
+    return converted_coordinates
+
+# Original format string
+# Convert and print the result
+converted_result = convert_coordinates(array_string)
+for group in converted_result:
+    print(group)
+
 
 
