@@ -6,7 +6,7 @@
 
 ![3D model render](/mechanical/3d_model.png)
 
-Model files can be found in the mechanical/ directory. https://a360.co/45wuxL5
+Model files can be found in the `mechanical/` directory or https://a360.co/45wuxL5
 
 **Ansys Analysis**:
 
@@ -39,6 +39,10 @@ Combined all tasks in one circuit.
 
 The Sinusoidal wave produced will be connected to a copper coil (basically an inductor). Another copper coil will be receiving the voltage. When connected across a capacitor and near a mine, due to metal eddy currents, there will be changes across voltage in capacitor measured by Arduino.
 
+
+#### PCBs
+
+The necessary PCBs can be fouond in the `electronics/` directory.
 
 ### Automation
 
