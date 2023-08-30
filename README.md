@@ -53,7 +53,8 @@ Cone detection as follows:
 
 **Path Planning**
 
-![Path Planning Algorithm](misc/latest_6_robot_auto_navigates_with_publish_subscribe.png)
+Example path
+![Path Planning Algorithm](misc/final_latest_6_robot_auto_navigates_with_publish_subscribe.png)
 
 Used RRT to create a path, also edited the `obstacle_detection.py` for path to be far away from walls, so that robot doesn't crash with it.
 
@@ -61,7 +62,7 @@ Used RRT to create a path, also edited the `obstacle_detection.py` for path to b
 
 Simple controller for robot to navigate along the planned path. `controller.py`
 
-![demo video of robot moving](misc/final_vid_of_robo_navigating.mp4)
+[demo video of robot moving](misc/final_vid_of_robo_navigating.mp4)
 
 
 **Others**
